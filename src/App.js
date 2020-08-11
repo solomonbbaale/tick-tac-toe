@@ -1,25 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import GameBoard from './Components/Board/Board';
+import _ from 'lodash';
+import Cell from './Components/Cell/Cell';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  const gameWidth = 3;
+  const gameHeight = 3;
+  let [turn,setTurn]=useState(0);
+  let Players = [{'name':"solomon",'id':1,'playerPiece':'x'},{'name':'ronnie','id':2,'playerPiece':'o'}];
+  let [playedPositions,setPlayedPositions] = useState([]);
+  let [gameStatus,setGameStatus] =useState('started');
+
+  useEffect(()=>{console.log('turn changed')},[turn])
+  
+  useEffect(()=>{
+    setTurn(1);
+    setTurn(turn => turn = turn + 1);
+  },[])
+  
+  let mouseOverCell = (event)=>{
+    event.target.classList.toggle('Active');
+  }
+
+let playedTurn=(event,identifier)=>{
+  let target = event.target;
+
+  setPlayedPositions(previous=>[...previous,identifier]);
+
+  let player = getCurrentPlayer(turn);
+
+  event.target.innerText= player.playerPiece;
+
+  setTurn(turn => turn = turn + 1);
+}
+
+let getCurrentPlayer=(turn)=>{
+  let current = getCurrentTurn(turn);
+
+  return _.find(Players,x=>x.id=== current);
+}
+
+let getCurrentTurn=(turn) => (turn%Players.length) === 0?1:2;
+console.log(playedPositions)
+return (
+          <GameBoard playedPositions={playedPositions} playedTurn={playedTurn} gameHeight={gameHeight} gameWidth={gameWidth} mouseOverCell={mouseOverCell}></GameBoard>
   );
 }
 

@@ -1,0 +1,11 @@
+class Player
+{
+    constructor(id,name){
+        this.id=id;
+        this.name=name;
+    }
+
+     Play(Board){
+      console.log('Playing');
+    }
+}
