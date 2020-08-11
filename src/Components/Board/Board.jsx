@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import Cell from '../Cell/Cell';
 
-const Board = ({gameWidth,gameHeight,mouseOverCell,playedTurn,playedPositions}) => {
+const Board = ({gameWidth,gameHeight,mouseOverCell,playedTurn,playedPositions,gameStatus}) => {
 
     let rows = Array(gameHeight).fill().map((_, i) => i+1);
     let cols = Array(gameWidth).fill().map((_,i)=>i+1);
@@ -13,7 +13,8 @@ const Board = ({gameWidth,gameHeight,mouseOverCell,playedTurn,playedPositions}) 
           {cols.map(col=> {
             let colClass= 'col';
             colClass = col!== gameWidth?`${colClass}  border-r`:colClass;
-           return <Cell playedPositions={playedPositions} colClass={colClass} key={'col '+col+ r} identifier={'col '+col + r} playedTurn={playedTurn}></Cell>
+            let key = 'col '+col+ r;
+           return <Cell gameStatus={gameStatus} playedPositions={playedPositions}  colClass={colClass} key={key} identifier={key} playedTurn={playedTurn}></Cell>
           })}
           </div>);
        

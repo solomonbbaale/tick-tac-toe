@@ -1,51 +1,127 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,Fragment} from 'react';
 import GameBoard from './Components/Board/Board';
 import _ from 'lodash';
-import Cell from './Components/Cell/Cell';
 import './App.css';
+import GameStatusBoard from './Components/GameStatusBoard/GameStatusBoard';
 
 function App() {
   const gameWidth = 3;
   const gameHeight = 3;
+  const gameTitle = "Tick Tack 😮";
+  let [winningPositions,setWinningPositions] = useState([[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]);
   let [turn,setTurn]=useState(0);
-  let Players = [{'name':"solomon",'id':1,'playerPiece':'x'},{'name':'ronnie','id':2,'playerPiece':'o'}];
+  let Players = [{'name':"Solomon",'id':1,'playerPiece':'x'},{'name':'Ronnie','id':2,'playerPiece':'o'}];
+  let [gamePositions,setPositions] =  useState([]);
   let [playedPositions,setPlayedPositions] = useState([]);
-  let [gameStatus,setGameStatus] =useState('started');
+  let [currentPlayer,setCurrentPlayer] = useState({});
+  let [gameStarted,setGameStarted] = useState(false);
+  let [gameStatus,setGameStatus] = useState(false);
+  let [DashBoardMessage,setDashBoardMessage]=useState('About To start');
 
-  useEffect(()=>{console.log('turn changed')},[turn])
-  
+  useEffect(()=>
+  { 
+    setGameStarted(true);
+    setTurn(1)
+  },[]);
+
   useEffect(()=>{
-    setTurn(1);
-    setTurn(turn => turn = turn + 1);
-  },[])
+    console.log("isGameOver "+gameStatus);
+    console.log(gamePositions);
+    if(gameStatus){
+    setDashBoardMessage("GAME OVER WINS "+currentPlayer.name.toUpperCase())
+    }
+  },
+  [gameStatus]);
+
+  useEffect(()=>{
   
+    if(!gameStatus){
+      let positions =  getPositions();
+      setPositions(old=>[...old,...positions]);
+      setCurrentPlayer(p=>getCurrentPlayer(turn));
+      let title = `${currentPlayer.name}'s Turn`;
+      setDashBoardMessage(title)
+    }
+  
+  },[turn,gameStarted]);
+
   let mouseOverCell = (event)=>{
     event.target.classList.toggle('Active');
   }
 
-let playedTurn=(event,identifier)=>{
-  let target = event.target;
+  let shouldEndGame=(identifier)=>{
 
-  setPlayedPositions(previous=>[...previous,identifier]);
+    let isGameOver=  setGameWinningStatus(identifier);
 
-  let player = getCurrentPlayer(turn);
+    if(isGameOver){
 
-  event.target.innerText= player.playerPiece;
+      setGameStatus(isGameOver);
+    }
 
-  setTurn(turn => turn = turn + 1);
+    return isGameOver;
+  }
+
+  let playedTurn=(event,identifier)=>{
+
+      if(gameStatus) return;
+
+      if(gamePositions.length>0){
+      
+      let target = event.target;
+
+      setPlayedPositions(previous=>[...previous,identifier]);
+
+      event.target.innerText= currentPlayer.playerPiece;
+
+      setGameWinningStatus(identifier);
+
+      setTurn(turn => turn = turn + 1);
+
+      setCurrentPlayer(p=>getCurrentPlayer(turn));
+    }
+  }
+  
+  let getCurrentPlayer=(turn)=>{
+    let current = getCurrentTurn(turn);
+
+    return _.find(Players,x=>x.id=== current);
+  }
+
+  let setGameWinningStatus=(identifier)=>{
+
+    if(gamePositions.length > 0 ){
+        if(gameStarted){
+            let playedPieceIndex = _.findIndex(gamePositions, p=>p.attributes['identifier'].value===identifier);
+            let availableWinningCombinations = winningPositions.filter(combination=> combination.some(e=>e===playedPieceIndex));
+
+            _.forEach(availableWinningCombinations,(combination)=>{
+                let result =_.every(combination,(p)=>gamePositions[playedPieceIndex].innerText!==''&&gamePositions[playedPieceIndex].innerText===gamePositions[p].innerText);
+                if(result){
+                  setGameStatus(result);
+                  setDashBoardMessage("GAME OVER WINS "+currentPlayer.name.toUpperCase());
+                  return true;
+                }
+            });
+        }
+
+        return false;
+    }
+
+    return false;
 }
 
-let getCurrentPlayer=(turn)=>{
-  let current = getCurrentTurn(turn);
+let getPositions =  () => document.querySelectorAll('.col');
 
-  return _.find(Players,x=>x.id=== current);
-}
+let getCurrentTurn=(turn) => turn!==0&&(turn%Players.length) === 0?2:1;
 
-let getCurrentTurn=(turn) => (turn%Players.length) === 0?1:2;
-console.log(playedPositions)
 return (
-          <GameBoard playedPositions={playedPositions} playedTurn={playedTurn} gameHeight={gameHeight} gameWidth={gameWidth} mouseOverCell={mouseOverCell}></GameBoard>
-  );
+  <Fragment>
+   <GameStatusBoard gameTitle={gameTitle} boardMessage={DashBoardMessage}></GameStatusBoard>
+   <GameBoard gameStatus={gameStatus} playedPositions={playedPositions} playedTurn={playedTurn} gameHeight={gameHeight} gameWidth={gameWidth} mouseOverCell={mouseOverCell}></GameBoard>
+  </Fragment>
+
+);
+
 }
 
 export default App;
