@@ -2,7 +2,7 @@ import React from 'react';
 
 const GameStatusBoard = (props) => {
 
-    let {gameTitle,boardMessage} = props;
+    const {gameTitle,boardMessage} = props;
 
     return ( <div style={{textAlign:"center"}}>
                 <h1>{gameTitle}</h1>

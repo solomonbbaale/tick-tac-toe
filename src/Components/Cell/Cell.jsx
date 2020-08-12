@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import _ from 'lodash';
 
 const Cell = ({colClass,playedTurn,identifier,playedPositions,gameStatus}) => {
-    let cell = _.find(playedPositions,id=>id===identifier);
-    let shouldNotExecuteHandler = (cell!== undefined || gameStatus===true)
+    const cell = _.find(playedPositions,id=>id===identifier);
+    const shouldNotExecuteHandler = (cell!== undefined || gameStatus===true)
     
     return (<div className={colClass} identifier={identifier} onClick={shouldNotExecuteHandler ? ()=>{}:(event)=>playedTurn(event,identifier)}></div> );
 }

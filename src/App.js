@@ -8,15 +8,15 @@ function App() {
   const gameWidth = 3;
   const gameHeight = 3;
   const gameTitle = "Tick Tack 😮";
-  let [winningPositions,setWinningPositions] = useState([[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]);
-  let [turn,setTurn]=useState(0);
-  let Players = [{'name':"Solomon",'id':1,'playerPiece':'x'},{'name':'Ronnie','id':2,'playerPiece':'o'}];
-  let [gamePositions,setPositions] =  useState([]);
-  let [playedPositions,setPlayedPositions] = useState([]);
-  let [currentPlayer,setCurrentPlayer] = useState({});
-  let [gameStarted,setGameStarted] = useState(false);
-  let [gameStatus,setGameStatus] = useState(false);
-  let [DashBoardMessage,setDashBoardMessage]=useState('About To start');
+  const [winningPositions,setWinningPositions] = useState([[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]);
+  const [turn,setTurn]=useState(0);
+  const Players = [{'name':"Solomon",'id':1,'playerPiece':'x'},{'name':'Ronnie','id':2,'playerPiece':'o'}];
+  const [gamePositions,setPositions] =  useState([]);
+  const [playedPositions,setPlayedPositions] = useState([]);
+  const [currentPlayer,setCurrentPlayer] = useState({});
+  const [gameStarted,setGameStarted] = useState(false);
+  const [gameStatus,setGameStatus] = useState(false);
+  const [DashBoardMessage,setDashBoardMessage]=useState('About To start');
 
   useEffect(()=>
   { 
@@ -25,8 +25,6 @@ function App() {
   },[]);
 
   useEffect(()=>{
-    console.log("isGameOver "+gameStatus);
-    console.log(gamePositions);
     if(gameStatus){
     setDashBoardMessage("GAME OVER WINS "+currentPlayer.name.toUpperCase())
     }
@@ -36,22 +34,22 @@ function App() {
   useEffect(()=>{
   
     if(!gameStatus){
-      let positions =  getPositions();
+      const positions =  getPositions();
       setPositions(old=>[...old,...positions]);
       setCurrentPlayer(p=>getCurrentPlayer(turn));
-      let title = `${currentPlayer.name}'s Turn`;
+      const title = `${currentPlayer.name}'s Turn`;
       setDashBoardMessage(title)
     }
   
   },[turn,gameStarted]);
 
-  let mouseOverCell = (event)=>{
+  const mouseOverCell = (event)=>{
     event.target.classList.toggle('Active');
   }
 
-  let shouldEndGame=(identifier)=>{
+  const shouldEndGame=(identifier)=>{
 
-    let isGameOver=  setGameWinningStatus(identifier);
+    const isGameOver=  setGameWinningStatus(identifier);
 
     if(isGameOver){
 
@@ -61,13 +59,13 @@ function App() {
     return isGameOver;
   }
 
-  let playedTurn=(event,identifier)=>{
+  const playedTurn=(event,identifier)=>{
 
       if(gameStatus) return;
 
       if(gamePositions.length>0){
       
-      let target = event.target;
+      const target = event.target;
 
       setPlayedPositions(previous=>[...previous,identifier]);
 
@@ -81,21 +79,21 @@ function App() {
     }
   }
   
-  let getCurrentPlayer=(turn)=>{
-    let current = getCurrentTurn(turn);
+  const getCurrentPlayer=(turn)=>{
+    const current = getCurrentTurn(turn);
 
     return _.find(Players,x=>x.id=== current);
   }
 
-  let setGameWinningStatus=(identifier)=>{
+  const setGameWinningStatus=(identifier)=>{
 
     if(gamePositions.length > 0 ){
         if(gameStarted){
-            let playedPieceIndex = _.findIndex(gamePositions, p=>p.attributes['identifier'].value===identifier);
-            let availableWinningCombinations = winningPositions.filter(combination=> combination.some(e=>e===playedPieceIndex));
+          const playedPieceIndex = _.findIndex(gamePositions, p=>p.attributes['identifier'].value===identifier);
+          const availableWinningCombinations = winningPositions.filter(combination=> combination.some(e=>e===playedPieceIndex));
 
             _.forEach(availableWinningCombinations,(combination)=>{
-                let result =_.every(combination,(p)=>gamePositions[playedPieceIndex].innerText!==''&&gamePositions[playedPieceIndex].innerText===gamePositions[p].innerText);
+              const result =_.every(combination,(p)=>gamePositions[playedPieceIndex].innerText!==''&&gamePositions[playedPieceIndex].innerText===gamePositions[p].innerText);
                 if(result){
                   setGameStatus(result);
                   setDashBoardMessage("GAME OVER WINS "+currentPlayer.name.toUpperCase());
@@ -110,9 +108,9 @@ function App() {
     return false;
 }
 
-let getPositions =  () => document.querySelectorAll('.col');
+const getPositions =  () => document.querySelectorAll('.col');
 
-let getCurrentTurn=(turn) => turn!==0&&(turn%Players.length) === 0?2:1;
+const getCurrentTurn=(turn) => turn!==0&&(turn%Players.length) === 0?2:1;
 
 return (
   <Fragment>
